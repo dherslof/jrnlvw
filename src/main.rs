@@ -6,9 +6,9 @@
 //------------------------------------------------------------------------------
 #[macro_use]
 extern crate clap;
+extern crate chrono;
 extern crate serde;
 extern crate serde_json;
-extern crate chrono;
 #[macro_use]
 extern crate failure;
 
@@ -21,13 +21,15 @@ mod parser;
 //------------------------------------------------------------------------------
 
 fn main() {
-
     // get cli arguments
     let matches = cli::create_cli().get_matches();
 
     let options = match opt::CliOptions::from_matches(&matches) {
         Ok(opt) => Ok(opt),
-        Err(err) => { eprintln!("Failed to get cli-options: {}", err); Err(err)},
+        Err(err) => {
+            eprintln!("Failed to get cli-options: {}", err);
+            Err(err)
+        }
     };
 
     if options.is_err() {
@@ -37,7 +39,10 @@ fn main() {
     // Parse logfile based on cli options
     let parsed_file = match parser::ParsedLogfile::new(&options.unwrap()) {
         Ok(f) => Ok(f),
-        Err(err) => { eprintln!("Failed to parse logfile: {}", err); Err(err)},
+        Err(err) => {
+            eprintln!("Failed to parse logfile: {}", err);
+            Err(err)
+        }
     };
 
     if parsed_file.is_err() {
