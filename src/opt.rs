@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 
 use std::path::Path;
-
+use chrono::{NaiveDate, NaiveTime, NaiveDateTime, Timelike};
 //------------------------------------------------------------------------------
 // Command line interface flags
 //------------------------------------------------------------------------------
@@ -18,7 +18,10 @@ pub const BOOT_FILTER: &str = "boot";
 pub const UNIT_FILTER: &str = "unit";
 pub const KERNEL_FLAG: &str = "kernel";
 pub const NUM_OF_ENTRIES: &str = "number";
-//Todo: add time arguments, from/to point in time
+pub const TIME_FROM: &str = "time-from";
+pub const TIME_TO: &str = "time-to";
+pub const DATE_FROM: &str = "date-from";
+pub const DATE_TO: &str = "date-to";
 
 //------------------------------------------------------------------------------
 // File Command line options/argument struct type
@@ -33,6 +36,10 @@ pub struct CliOptions {
     unit_filter: Vec<String>,
     kernel_flag: bool,
     num_of_entries: u32,
+    start_time_filter: u64,
+    stop_time_filter:u64,
+    start_date_filter: u64,
+    stop_date_filter:u64,
 }
 
 //------------------------------------------------------------------------------
@@ -73,6 +80,22 @@ impl CliOptions {
 
     pub fn num_of_entries(&self) -> u32 {
         return self.num_of_entries;
+    }
+
+    pub fn start_time_filter(&self) -> u64 {
+        return self.start_time_filter;
+    }
+
+    pub fn stop_time_filter(&self) -> u64 {
+        return self.stop_time_filter;
+    }
+
+    pub fn start_date_filter(&self) -> u64 {
+        return self.start_date_filter;
+    }
+
+    pub fn stop_date_filter(&self) -> u64 {
+        return self.stop_date_filter;
     }
 }
 
@@ -149,6 +172,49 @@ impl CliOptions {
             let num = matches.value_of(NUM_OF_ENTRIES).unwrap();
             let num = num.parse::<u32>()?;
             cli_opt.num_of_entries = num;
+        }
+
+        if matches.is_present(TIME_FROM) {
+            let input = matches.value_of(TIME_FROM).unwrap();
+            let time = NaiveTime::parse_from_str(input, "%H:%M:%S")?;
+
+            // Recalculate to seconds from midnight
+            let from_midnight_s = time.hour()*3600 + time.minute()*60 + time.second();
+
+            cli_opt.start_time_filter = from_midnight_s as u64;
+            println!("DEV_PRINT: from-time: {}, which is {}s from midnight",time, from_midnight_s);
+        }
+
+        if matches.is_present(TIME_TO) {
+            let input = matches.value_of(TIME_TO).unwrap();
+            let time = NaiveTime::parse_from_str(input, "%H:%M:%S")?;
+
+            // As above
+            let from_midnight_s = time.hour()*3600 + time.minute()*60 + time.second();
+
+            cli_opt.stop_time_filter = from_midnight_s as u64;
+            println!("DEV_PRINT: to-time: {}, which is {}s from midnight",time, from_midnight_s);
+        }
+
+        if matches.is_present(DATE_FROM) {
+            let input = matches.value_of(DATE_FROM).unwrap();
+            let date = NaiveDate::parse_from_str(input, "%Y:%m:%d")?;
+
+            // Construct a new 'NaiveDateTime' struct in order to get UTC timestamp from DateTimeStruct
+            // Note this is since 1970 and NOT UTC 1970
+            let td = NaiveDateTime::new(date, NaiveTime::from_hms(0, 0, 0));
+            cli_opt.start_date_filter = td.timestamp() as u64;
+            println!("date: {}, seconds since 1970: {}", date, &cli_opt.start_date_filter);
+        }
+
+        if matches.is_present(DATE_TO) {
+            let input = matches.value_of(DATE_TO).unwrap();
+            let date = NaiveDate::parse_from_str(input, "%Y:%m:%d")?;
+
+            // As above
+            let td = NaiveDateTime::new(date, NaiveTime::from_hms(0, 0, 0));
+            cli_opt.stop_date_filter = td.timestamp() as u64;
+            println!("date: {}, seconds since 1970: {}", date, &cli_opt.start_date_filter);
         }
 
         return Ok(cli_opt);

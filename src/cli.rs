@@ -71,6 +71,40 @@ pub fn create_cli() -> App<'static, 'static> {
                 .takes_value(true)
                 .multiple(true),
         )
-    //Todo Time filters
+        .arg(
+            Arg::with_name(opt::TIME_FROM)
+            .help(
+                "Specify a point in time (UTC hour:minute:second) as a start point for displaying log entries.")
+            .required(false)
+            .long(opt::TIME_FROM)
+            .short("f")
+            .takes_value(true)
+        )
+        .arg(
+            Arg::with_name(opt::TIME_TO)
+            .help("Specify a point in time (UTC hour:minute:second) as a stop point for displaying log entries")
+            .required(false)
+            .long(opt::TIME_TO)
+            .short("s")
+            .takes_value(true)
+        )
+        .arg (
+            Arg::with_name(opt::DATE_FROM)
+            .help("Specify a day in time (UTC year:month:day) as a start point for displaying log entries")
+            .required(false)
+            .long(opt::DATE_FROM)
+            .short("F")
+            .takes_value(true)
+        )
+        .arg (
+            Arg::with_name(opt::DATE_TO)
+            .help("Specify a day in time (UTC year:month:day) as a stop point for displaying log entries")
+            .required(false)
+            .long(opt::DATE_TO)
+            .short("S")
+            .takes_value(true)
+        )
+        //Todo, add subcommand for creating a output file
+
     // Todo: more filters
 }
