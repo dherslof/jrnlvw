@@ -47,7 +47,7 @@ pub fn create_cli() -> App<'static, 'static> {
         )
         .arg(
             Arg::with_name(opt::UNIT_FILTER)
-                .help("systemd unit to print (multiple)")
+                .help("systemd unit(s) to print")
                 .required(false)
                 .long(opt::UNIT_FILTER)
                 .short("u")
@@ -64,13 +64,47 @@ pub fn create_cli() -> App<'static, 'static> {
         )
         .arg(
             Arg::with_name(opt::BOOT_FILTER)
-                .help("Specify a boot to show (multiple)")
+                .help("Specify a boot(s) to show ")
                 .required(false)
                 .long(opt::BOOT_FILTER)
                 .short("b")
                 .takes_value(true)
                 .multiple(true),
         )
-    //Todo Time filters
+        .arg(
+            Arg::with_name(opt::TIME_FROM)
+            .help(
+                "Specify a point in time (UTC hour:minute:second) as a start point for displaying log entries.")
+            .required(false)
+            .long(opt::TIME_FROM)
+            .short("t")
+            .takes_value(true)
+        )
+        .arg(
+            Arg::with_name(opt::TIME_TO)
+            .help("Specify a point in time (UTC hour:minute:second) as a stop point for displaying log entries")
+            .required(false)
+            .long(opt::TIME_TO)
+            .short("T")
+            .takes_value(true)
+        )
+        .arg (
+            Arg::with_name(opt::DATE_FROM)
+            .help("Specify a day in time (UTC year:month:day) as a start point for displaying log entries")
+            .required(false)
+            .long(opt::DATE_FROM)
+            .short("d")
+            .takes_value(true)
+        )
+        .arg (
+            Arg::with_name(opt::DATE_TO)
+            .help("Specify a day in time (UTC year:month:day) as a stop point for displaying log entries")
+            .required(false)
+            .long(opt::DATE_TO)
+            .short("D")
+            .takes_value(true)
+        )
+        //Todo, add arg for creating a output file
+
     // Todo: more filters
 }
