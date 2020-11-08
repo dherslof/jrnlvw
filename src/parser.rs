@@ -84,8 +84,7 @@ impl ParsedLogfile {
 
         #[allow(non_snake_case)]
         let NOT_AVAILABLE = String::from("N/A");
-        //Dev
-        println!("DEV: starting to parsing file");
+
 
         // open and read file json formatted systemd journal file
         let file = File::open(parse_options.logfile_path())?;
@@ -112,7 +111,6 @@ impl ParsedLogfile {
             entries.push(entry);
         }
 
-        println!("DEV-PRINT: size of entry vector {}", entries.len());
         let number = entries.len();
 
         match entries[0]._BOOT_ID {
@@ -213,7 +211,7 @@ impl ParsedLogfile {
         // Check if boot filter should be used when creating HashMap keys
         let boot_list_filter = self.parse_opt.boot_filter();
         if boot_list_filter.len() != 0 {
-            // only get entries from specified boot(s)
+            //only get entries from specified boot(s)
             for id in boot_list_filter {
                 entry_list.insert(id.clone(), Vec::new());
             }
@@ -328,10 +326,78 @@ impl ParsedLogfile {
 
             let e_rt_ts = e_rt_ts.parse::<i64>()?;
 
-            // prepare for date filter (as timespan start/stop input)
-            // add date filter here, now we have an int value to compare with
-
             let since_utc_s = e_rt_ts / 1000000;
+
+            // Get time and date START filters
+            let start_time_filter = self.parse_opt.start_time_filter();
+            let start_date_filter = self.parse_opt.start_date_filter();
+
+            if start_date_filter != 0 {
+                // date filter is set, add seconds sicne midnight to get UTC timestamp in seconds
+                let starting_point = start_date_filter + start_time_filter;
+
+                //compare against entry timestamp
+                if since_utc_s <= starting_point {
+                    // entry time stamp before starting point, ignore entry
+                    continue;
+                }
+
+            } else if start_time_filter != 0 {
+                // Get NaitveTime struct in order for compare times.
+                let day_time_entry = NaiveDateTime::from_timestamp(since_utc_s, 0).time();
+                let day_time_filter = NaiveTime::from_num_seconds_from_midnight(start_time_filter as u32,0);
+
+                // Compare on hour
+                if day_time_entry.hour() < day_time_filter.hour() {
+                    // entry time (hour) is less then filter, ignore entry
+                    continue;
+                } else if day_time_entry.hour() == day_time_filter.hour() {
+                    // Same hour, compare on minute
+                    if day_time_entry.minute() < day_time_filter.minute() {
+                        // entry time (minute) is less then filter, ignore entry
+                        continue;
+                    } else if day_time_entry.minute() == day_time_filter.minute() {
+                        // Same minute, compare on seconds
+                        if day_time_entry.second() < day_time_filter.second() {
+                        // entry time (seconds) is less then filter, ignore entry
+                        continue;
+                        }
+                    }
+                }
+            }
+
+            // get time and date STOP filters
+            let stop_time_filter = self.parse_opt.stop_time_filter();
+            let stop_date_filter = self.parse_opt.stop_date_filter();
+
+            // verification of filters, same idea as above
+            if stop_date_filter != 0 {
+                let stopping_point = stop_date_filter + stop_time_filter;
+
+                if since_utc_s >= stopping_point {
+                    // entry timestamp after stopping point, ignore entry
+                    continue;
+                }
+
+            } else if stop_time_filter != 0 {
+                let day_time_entry = NaiveDateTime::from_timestamp(since_utc_s, 0).time();
+                let day_time_filter = NaiveTime::from_num_seconds_from_midnight(stop_time_filter as u32,0);
+
+                if day_time_entry.hour() > day_time_filter.hour()
+                {
+                    continue;
+                } else if day_time_entry.hour() == day_time_filter.hour() {
+                    if day_time_entry.minute() > day_time_filter.minute() {
+                        continue;
+                    } else if day_time_entry.minute() == day_time_filter.minute() {
+                        if day_time_entry.second() > day_time_filter.second() {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            // Format entry timestamp
             let formatted_timestamp = UTC.timestamp(since_utc_s, 0);
             let formatted_timestamp = formatted_timestamp.format("%Y-%m-%d %H:%M:%S").to_string();
 

@@ -47,7 +47,7 @@ pub fn create_cli() -> App<'static, 'static> {
         )
         .arg(
             Arg::with_name(opt::UNIT_FILTER)
-                .help("systemd unit to print (multiple)")
+                .help("systemd unit(s) to print")
                 .required(false)
                 .long(opt::UNIT_FILTER)
                 .short("u")
@@ -64,7 +64,7 @@ pub fn create_cli() -> App<'static, 'static> {
         )
         .arg(
             Arg::with_name(opt::BOOT_FILTER)
-                .help("Specify a boot to show (multiple)")
+                .help("Specify a boot(s) to show ")
                 .required(false)
                 .long(opt::BOOT_FILTER)
                 .short("b")
@@ -77,7 +77,7 @@ pub fn create_cli() -> App<'static, 'static> {
                 "Specify a point in time (UTC hour:minute:second) as a start point for displaying log entries.")
             .required(false)
             .long(opt::TIME_FROM)
-            .short("f")
+            .short("t")
             .takes_value(true)
         )
         .arg(
@@ -85,7 +85,7 @@ pub fn create_cli() -> App<'static, 'static> {
             .help("Specify a point in time (UTC hour:minute:second) as a stop point for displaying log entries")
             .required(false)
             .long(opt::TIME_TO)
-            .short("s")
+            .short("T")
             .takes_value(true)
         )
         .arg (
@@ -93,7 +93,7 @@ pub fn create_cli() -> App<'static, 'static> {
             .help("Specify a day in time (UTC year:month:day) as a start point for displaying log entries")
             .required(false)
             .long(opt::DATE_FROM)
-            .short("F")
+            .short("d")
             .takes_value(true)
         )
         .arg (
@@ -101,10 +101,10 @@ pub fn create_cli() -> App<'static, 'static> {
             .help("Specify a day in time (UTC year:month:day) as a stop point for displaying log entries")
             .required(false)
             .long(opt::DATE_TO)
-            .short("S")
+            .short("D")
             .takes_value(true)
         )
-        //Todo, add subcommand for creating a output file
+        //Todo, add arg for creating a output file
 
     // Todo: more filters
 }
