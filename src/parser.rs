@@ -85,7 +85,6 @@ impl ParsedLogfile {
         #[allow(non_snake_case)]
         let NOT_AVAILABLE = String::from("N/A");
 
-
         // open and read file json formatted systemd journal file
         let file = File::open(parse_options.logfile_path())?;
         let buf_reader = BufReader::new(file);
@@ -341,11 +340,11 @@ impl ParsedLogfile {
                     // entry time stamp before starting point, ignore entry
                     continue;
                 }
-
             } else if start_time_filter != 0 {
                 // Get NaitveTime struct in order for compare times.
                 let day_time_entry = NaiveDateTime::from_timestamp(since_utc_s, 0).time();
-                let day_time_filter = NaiveTime::from_num_seconds_from_midnight(start_time_filter as u32,0);
+                let day_time_filter =
+                    NaiveTime::from_num_seconds_from_midnight(start_time_filter as u32, 0);
 
                 // Compare on hour
                 if day_time_entry.hour() < day_time_filter.hour() {
@@ -359,8 +358,8 @@ impl ParsedLogfile {
                     } else if day_time_entry.minute() == day_time_filter.minute() {
                         // Same minute, compare on seconds
                         if day_time_entry.second() < day_time_filter.second() {
-                        // entry time (seconds) is less then filter, ignore entry
-                        continue;
+                            // entry time (seconds) is less then filter, ignore entry
+                            continue;
                         }
                     }
                 }
@@ -378,13 +377,12 @@ impl ParsedLogfile {
                     // entry timestamp after stopping point, ignore entry
                     continue;
                 }
-
             } else if stop_time_filter != 0 {
                 let day_time_entry = NaiveDateTime::from_timestamp(since_utc_s, 0).time();
-                let day_time_filter = NaiveTime::from_num_seconds_from_midnight(stop_time_filter as u32,0);
+                let day_time_filter =
+                    NaiveTime::from_num_seconds_from_midnight(stop_time_filter as u32, 0);
 
-                if day_time_entry.hour() > day_time_filter.hour()
-                {
+                if day_time_entry.hour() > day_time_filter.hour() {
                     continue;
                 } else if day_time_entry.hour() == day_time_filter.hour() {
                     if day_time_entry.minute() > day_time_filter.minute() {

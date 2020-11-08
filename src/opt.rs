@@ -5,8 +5,8 @@
 // License: MIT
 //------------------------------------------------------------------------------
 
+use chrono::{DateTime, NaiveDate, NaiveDateTime, NaiveTime, Timelike, UTC};
 use std::path::Path;
-use chrono::{NaiveDate, NaiveTime, NaiveDateTime, Timelike, UTC, DateTime};
 //------------------------------------------------------------------------------
 // Command line interface flags
 //------------------------------------------------------------------------------
@@ -37,9 +37,9 @@ pub struct CliOptions {
     kernel_flag: bool,
     num_of_entries: u32,
     start_time_filter: i64,
-    stop_time_filter:i64,
+    stop_time_filter: i64,
     start_date_filter: i64,
-    stop_date_filter:i64,
+    stop_date_filter: i64,
 }
 
 //------------------------------------------------------------------------------
@@ -182,7 +182,7 @@ impl CliOptions {
             let time = NaiveTime::parse_from_str(input, "%H:%M:%S")?;
 
             // Recalculate to seconds from midnight
-            let from_midnight_s = time.hour()*3600 + time.minute()*60 + time.second();
+            let from_midnight_s = time.hour() * 3600 + time.minute() * 60 + time.second();
 
             cli_opt.start_time_filter = from_midnight_s as i64;
         }
@@ -192,7 +192,7 @@ impl CliOptions {
             let time = NaiveTime::parse_from_str(input, "%H:%M:%S")?;
 
             // As above
-            let from_midnight_s = time.hour()*3600 + time.minute()*60 + time.second();
+            let from_midnight_s = time.hour() * 3600 + time.minute() * 60 + time.second();
 
             cli_opt.stop_time_filter = from_midnight_s as i64;
         }
@@ -205,7 +205,8 @@ impl CliOptions {
             // Note this is since 1970 and NOT UTC 1970
             let td = NaiveDateTime::new(date, NaiveTime::from_hms(0, 0, 0));
             // Construct a utc DateTime, and get the UTC timestamp
-            let dt_utc = DateTime::<UTC>::from_utc(NaiveDateTime::from_timestamp(td.timestamp(), 0), UTC);
+            let dt_utc =
+                DateTime::<UTC>::from_utc(NaiveDateTime::from_timestamp(td.timestamp(), 0), UTC);
             cli_opt.start_date_filter = dt_utc.timestamp() as i64;
         }
 
@@ -215,7 +216,8 @@ impl CliOptions {
 
             // As above
             let td = NaiveDateTime::new(date, NaiveTime::from_hms(0, 0, 0));
-            let dt_utc = DateTime::<UTC>::from_utc(NaiveDateTime::from_timestamp(td.timestamp(), 0), UTC);
+            let dt_utc =
+                DateTime::<UTC>::from_utc(NaiveDateTime::from_timestamp(td.timestamp(), 0), UTC);
             cli_opt.stop_date_filter = dt_utc.timestamp() as i64;
         }
 

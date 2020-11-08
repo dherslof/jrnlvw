@@ -37,3 +37,5 @@ Current implemented filters are:
 
 Different filters can be used for combined filtering.
 
+## Building 
+Not available at crates.io. Clone sources and use cargo to build the binary.  
