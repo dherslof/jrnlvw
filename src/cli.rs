@@ -104,7 +104,7 @@ pub fn create_cli() -> App<'static, 'static> {
             .short("D")
             .takes_value(true)
         )
-        //Todo, add arg for creating a output file
+    //Todo, add arg for creating a output file
 
     // Todo: more filters
 }
