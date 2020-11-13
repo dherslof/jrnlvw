@@ -1,12 +1,12 @@
 # jrnlvw - journal viewer
-Simple parser for viewing systemd journal files (in json format). Mostly done as Rust practice but the tool can actually be useful, possible for someone more then myself! 
+Simple parser for viewing systemd journal files (in json format). Mostly done as Rust practice but the tool can actually be useful, possible for someone else then myself! 
 
 ## Usage
 Following examples expects `jrnlvw` to be installed.  
 
 View a logfile: 
 ```bash 
-$ jrnlvw <loggile>
+$ jrnlvw <logfile>
 ```
 List boots in logfile: 
 ```bash
