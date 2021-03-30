@@ -1,6 +1,7 @@
 [package]
 name = "jrnlvw"
 version = "0.1.0"
+Description = "journal log viewer"
 authors = ["Daniel Herslöf"]
 license = "MIT"
 homepage = "https://github.com/dherslof/jrnlvw"
